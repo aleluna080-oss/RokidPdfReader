@@ -33,6 +33,10 @@ android {
     lint {
         // La APK se distribuirá por sideload, no Google Play.
         disable += "ExpiredTargetSdkVersion"
+
+        // Este filtro abre archivos PDF por MIME type, no enlaces web.
+        // Android Lint lo interpreta erróneamente como un App Link.
+        disable += "AppLinkUrlError"
     }
 }
 
