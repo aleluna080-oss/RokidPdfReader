@@ -1,0 +1,63 @@
+ROKID PDF READER V3 — HAND GESTURE NAVIGATION
+
+OBJETIVO
+Agregar navegación gestual al lector PDF sin perder transferencia QR/Wi-Fi.
+
+GESTOS V3
+✋ Palma abierta + deslizar izquierda  -> página siguiente
+✋ Palma abierta + deslizar derecha    -> página anterior
+🤏 Pinza pulgar/índice + mover          -> desplazar página ampliada
+👐 Dos palmas abiertas separar/juntar   -> zoom
+👍 Pulgar arriba                         -> ajustar página completa
+✊ Puño cerrado mantenido ~0.9 s         -> volver a biblioteca
+
+IMPORTANTE
+- La cámara se activa solo mientras un PDF está abierto y Gestos está ON.
+- No se muestra preview.
+- No se guardan frames.
+- MediaPipe procesa los frames localmente en el dispositivo.
+- Los botones siguen disponibles como respaldo.
+- Hay botón GESTOS ON/OFF dentro del visor.
+
+MODELO
+El archivo gesture_recognizer.task NO se guarda en el repositorio.
+GitHub Actions lo descarga desde el modelo oficial de MediaPipe durante la compilación
+y lo empaqueta dentro del APK.
+
+ARCHIVOS A REEMPLAZAR
+1. app/build.gradle.kts
+2. app/src/main/AndroidManifest.xml
+3. app/src/main/res/layout/activity_main.xml
+4. app/src/main/java/com/alexluna/rokidpdfreader/MainActivity.java
+5. app/src/main/java/com/alexluna/rokidpdfreader/ZoomImageView.java
+6. .github/workflows/build-apk.yml
+
+ARCHIVO NUEVO
+7. app/src/main/java/com/alexluna/rokidpdfreader/HandGestureController.java
+
+PASOS GITHUB DESKTOP
+Summary:
+Add V3 hand gesture PDF navigation
+
+Commit to main
+Push origin
+
+GitHub Actions debe generar:
+RokidPdfReader-V3-APK
+RokidPdfReader-V3-debug.apk
+
+PRUEBA FÍSICA RECOMENDADA
+1. Instala V3 sobre V2.
+2. Abre un PDF.
+3. Acepta permiso de cámara.
+4. Espera el texto "Gestos activos".
+5. Prueba primero una palma abierta y desliza lentamente de un lado al otro.
+6. Prueba pulgar arriba para reajustar.
+7. Amplía con dos palmas.
+8. Haz pinza y mueve la mano para desplazar una página ampliada.
+9. Mantén puño cerrado aproximadamente 1 segundo para volver a biblioteca.
+
+AJUSTE POSTERIOR
+La sensibilidad de swipe, pinch, zoom y cooldown puede necesitar calibración específica
+para el FOV/cámara de las Rokid reales. Esa calibración se hará después de la primera
+prueba física de V3.

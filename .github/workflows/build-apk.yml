@@ -13,7 +13,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Checkout source
@@ -38,16 +38,24 @@ jobs:
         with:
           gradle-version: "8.9"
 
+      - name: Download MediaPipe gesture model
+        run: |
+          mkdir -p app/src/main/assets
+          curl --fail --location --retry 3 \
+            "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task" \
+            --output app/src/main/assets/gesture_recognizer.task
+          test -s app/src/main/assets/gesture_recognizer.task
+
       - name: Build debug APK
         run: gradle --no-daemon :app:lintDebug :app:assembleDebug
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk RokidPdfReader-V2-debug.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk RokidPdfReader-V3-debug.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RokidPdfReader-V2-APK
-          path: RokidPdfReader-V2-debug.apk
+          name: RokidPdfReader-V3-APK
+          path: RokidPdfReader-V3-debug.apk
           if-no-files-found: error
           retention-days: 30

@@ -10,9 +10,8 @@ import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
 
 /**
- * ImageView con zoom/pan táctil.
- * En Rokid, los botones +/−/Ajustar son el respaldo principal.
- * Si el firmware entrega eventos táctiles, pinch y arrastre también funcionan.
+ * Visor con zoom y desplazamiento.
+ * Admite táctil y también órdenes normalizadas provenientes del seguimiento de manos.
  */
 public class ZoomImageView extends ImageView {
 
@@ -44,15 +43,21 @@ public class ZoomImageView extends ImageView {
 
     private void init(Context context) {
         setScaleType(ScaleType.MATRIX);
+
         scaleDetector = new ScaleGestureDetector(
                 context,
                 new ScaleGestureDetector.SimpleOnScaleGestureListener() {
                     @Override
                     public boolean onScale(ScaleGestureDetector detector) {
-                        zoomBy(detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY());
+                        zoomBy(
+                                detector.getScaleFactor(),
+                                detector.getFocusX(),
+                                detector.getFocusY()
+                        );
                         return true;
                     }
-                });
+                }
+        );
     }
 
     @Override
@@ -63,13 +68,23 @@ public class ZoomImageView extends ImageView {
 
     public void fitToScreen() {
         Drawable drawable = getDrawable();
-        if (drawable == null || getWidth() <= 0 || getHeight() <= 0) return;
+
+        if (drawable == null || getWidth() <= 0 || getHeight() <= 0) {
+            return;
+        }
 
         float dw = drawable.getIntrinsicWidth();
         float dh = drawable.getIntrinsicHeight();
-        if (dw <= 0 || dh <= 0) return;
 
-        float scale = Math.min(getWidth() / dw, getHeight() / dh);
+        if (dw <= 0 || dh <= 0) {
+            return;
+        }
+
+        float scale = Math.min(
+                getWidth() / dw,
+                getHeight() / dh
+        );
+
         float dx = (getWidth() - dw * scale) / 2f;
         float dy = (getHeight() - dh * scale) / 2f;
 
@@ -85,17 +100,77 @@ public class ZoomImageView extends ImageView {
     }
 
     public void zoomIn() {
-        zoomBy(1.25f, getWidth() / 2f, getHeight() / 2f);
+        zoomBy(
+                1.25f,
+                getWidth() / 2f,
+                getHeight() / 2f
+        );
     }
 
     public void zoomOut() {
-        zoomBy(0.80f, getWidth() / 2f, getHeight() / 2f);
+        zoomBy(
+                0.80f,
+                getWidth() / 2f,
+                getHeight() / 2f
+        );
     }
 
-    public void zoomBy(float factor, float focusX, float focusY) {
-        if (getDrawable() == null) return;
+    public void zoomByGesture(
+            float factor,
+            float normalizedFocusX,
+            float normalizedFocusY
+    ) {
+        float clampedFactor = Math.max(
+                0.90f,
+                Math.min(1.10f, factor)
+        );
+
+        float focusX = normalizedFocusX * getWidth();
+        float focusY = normalizedFocusY * getHeight();
+
+        zoomBy(
+                clampedFactor,
+                focusX,
+                focusY
+        );
+    }
+
+    public void panByGesture(
+            float normalizedDx,
+            float normalizedDy
+    ) {
+        // Ganancia para que el movimiento de mano se sienta natural con un FOV pequeño.
+        float dx = normalizedDx * getWidth() * 1.9f;
+        float dy = normalizedDy * getHeight() * 1.9f;
+
+        panBy(dx, dy);
+    }
+
+    public int getZoomPercent() {
+        if (minScale <= 0f) {
+            return 100;
+        }
+
+        return Math.round(
+                (currentScale / minScale) * 100f
+        );
+    }
+
+    public boolean isZoomed() {
+        return currentScale > minScale * 1.04f;
+    }
+
+    public void zoomBy(
+            float factor,
+            float focusX,
+            float focusY
+    ) {
+        if (getDrawable() == null) {
+            return;
+        }
 
         float target = currentScale * factor;
+
         if (target < minScale) {
             factor = minScale / currentScale;
             target = minScale;
@@ -104,13 +179,24 @@ public class ZoomImageView extends ImageView {
             target = maxScale;
         }
 
-        imageMatrix.postScale(factor, factor, focusX, focusY);
+        imageMatrix.postScale(
+                factor,
+                factor,
+                focusX,
+                focusY
+        );
+
         currentScale = target;
+
         constrainTranslation();
         setImageMatrix(imageMatrix);
     }
 
     private void panBy(float dx, float dy) {
+        if (getDrawable() == null) {
+            return;
+        }
+
         imageMatrix.postTranslate(dx, dy);
         constrainTranslation();
         setImageMatrix(imageMatrix);
@@ -118,7 +204,10 @@ public class ZoomImageView extends ImageView {
 
     private void constrainTranslation() {
         Drawable drawable = getDrawable();
-        if (drawable == null) return;
+
+        if (drawable == null) {
+            return;
+        }
 
         RectF rect = new RectF(
                 0,
@@ -166,7 +255,9 @@ public class ZoomImageView extends ImageView {
                 if (dragging && !scaleDetector.isInProgress()) {
                     float dx = event.getX() - lastX;
                     float dy = event.getY() - lastY;
+
                     panBy(dx, dy);
+
                     lastX = event.getX();
                     lastY = event.getY();
                 }
