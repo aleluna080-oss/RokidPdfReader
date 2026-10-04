@@ -9,10 +9,9 @@ android {
     defaultConfig {
         applicationId = "com.alexluna.rokidpdfreader"
         minSdk = 29
-        // Conservador para sideload en Rokid/YodaOS.
         targetSdk = 32
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
     }
 
     buildTypes {
@@ -31,11 +30,7 @@ android {
     }
 
     lint {
-        // La APK se distribuirá por sideload, no Google Play.
         disable += "ExpiredTargetSdkVersion"
-
-        // Este filtro abre archivos PDF por MIME type, no enlaces web.
-        // Android Lint lo interpreta erróneamente como un App Link.
         disable += "AppLinkUrlError"
     }
 }
@@ -43,4 +38,10 @@ android {
 dependencies {
     implementation("androidx.activity:activity:1.10.1")
     implementation("androidx.core:core:1.16.0")
+
+    // Servidor HTTP local para recibir PDFs desde el teléfono.
+    implementation("org.nanohttpd:nanohttpd:2.3.1")
+
+    // Generación del código QR dentro de las Rokid.
+    implementation("com.google.zxing:core:3.5.3")
 }

@@ -42,12 +42,12 @@ jobs:
         run: gradle --no-daemon :app:lintDebug :app:assembleDebug
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk RokidPdfReader-V1-debug.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk RokidPdfReader-V2-debug.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RokidPdfReader-V1-APK
-          path: RokidPdfReader-V1-debug.apk
+          name: RokidPdfReader-V2-APK
+          path: RokidPdfReader-V2-debug.apk
           if-no-files-found: error
           retention-days: 30

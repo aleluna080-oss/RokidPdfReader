@@ -26,17 +26,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Importa un PDF o comparte uno con esta aplicación."
+            android:text="Recibe un PDF desde tu teléfono o impórtalo localmente."
             android:textColor="#B3FFFFFF"
             android:textSize="13sp"
             android:gravity="center" />
 
         <Button
-            android:id="@+id/importButton"
+            android:id="@+id/receiveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:text="IMPORTAR PDF" />
+            android:text="RECIBIR PDF DESDE TELÉFONO" />
+
+        <Button
+            android:id="@+id/importButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="IMPORTAR PDF LOCAL" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -50,6 +57,73 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
         </ScrollView>
+    </LinearLayout>
+
+    <!-- TRANSFERENCIA QR -->
+    <LinearLayout
+        android:id="@+id/transferView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="16dp"
+        android:visibility="gone"
+        android:background="#000000">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ENVIAR PDF A LAS ROKID"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="1. Conecta teléfono y Rokid a la misma Wi‑Fi.\n2. Escanea este QR con el teléfono.\n3. Elige el PDF y pulsa SUBIR."
+            android:textColor="#D9FFFFFF"
+            android:textSize="12sp"
+            android:gravity="center" />
+
+        <ImageView
+            android:id="@+id/qrImage"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="Código QR para enviar PDF"
+            android:adjustViewBounds="true"
+            android:background="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/transferUrlText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="http://192.168.1.10:8787/"
+            android:textColor="#FFFFFFFF"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/transferStatusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Esperando conexión…"
+            android:textColor="#B3FFFFFF"
+            android:textSize="12sp"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/closeTransferButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="VOLVER A BIBLIOTECA" />
     </LinearLayout>
 
     <!-- VISOR -->
